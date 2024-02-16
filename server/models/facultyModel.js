@@ -17,34 +17,51 @@ const facultySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    userType: {
+        type:String,
+        required:true,
+    },
     students: [
         {
             studentRollNumber: {
                 type: String,
                 required: true,
+                default: "",
+                
             },
             studentName: {
                 type: String,
                 required: true,
+                default: "",
+                
             },
             studentYear: {
                 type: String,
                 required: true,
+                default: "",
+                
             },
             studentSection: {
                 type: String,
                 required: true,
+                default: "",
+                
             },
             dateOfAppointment: {
                 type: Date,
                 required: true,
+                default: "",
+                
             },
             timeOfAppointment: {
                 type: String,
                 required: true,
+                default: "",
+                
             },
             messageForAppointment: {
                 type: String,
+                default: "",
             },
             approvalStatus: {
                 type: Boolean,

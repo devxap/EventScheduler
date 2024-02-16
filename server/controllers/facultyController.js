@@ -86,3 +86,48 @@ module.exports.verifyApprove = async (req, res, next) => {
         next(error);
     }
 }
+
+module.exports.registerFaculty=async(req,res,next)=>{
+    try {
+      const {username,facultyName,email,password} = req.body;
+      const userNameCheck=await Faculty.findOne({username});
+      if(userNameCheck){
+          return res.json({msg:"Username already used!", status:false});
+      }
+      const emailCheck=await Faculty.findOne({email});
+      if(emailCheck){
+          return res.json({msg:"Email already used!", status:false});
+      }
+  
+      const hashedPassword=await bcrypt.hash(password,10);
+      const user = await Faculty.create({
+          email,
+          username,
+          password:hashedPassword,
+          facultyName,
+      })
+  
+      delete user.password;
+      return res.json({status:true, user});
+  } catch (error) {
+      next(error);
+  }
+  }
+  
+  module.exports.loginFaculty= async(req,res,next)=>{
+    try {
+        const {username, password} = req.body;
+        const user= await Faculty.findOne({username});
+        if(!user){
+            return res.json({msg:"Incorrect username or password!",status:false});
+        }
+        const isPasswordValid=await bcrypt.compare(password, user.password);
+        if(!isPasswordValid){
+            return res.json({msg:"Incorrect username or password!",status:false});
+        }
+        delete user.password;
+        return res.json({status:true,user});
+    } catch (error) {
+        next(error);
+    }
+    }

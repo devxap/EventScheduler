@@ -29,22 +29,27 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    userType: {
+        type:String,
+        required:true,
+    },
     appointments: [
         {
             facultyName: {
                 type: String,
-                required: true,
+                default: "",
             },
             dateOfAppointment: {
                 type: Date,
-                required: true,
+                default: "",
             },
             timeOfAppointment: {
                 type: String,
-                required: true,
+                default: "",
             },
             messageForAppointment: {
                 type: String,
+                default: "",
             },
             approvalStatus: {
                 type: Boolean,

@@ -1,22 +1,49 @@
-import React from 'react';
 import userpic from '../../src/userpic.png';
 import logoutpic from '../../src/logout.png';
-
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import {ToastContainer, toast} from 'react-toastify';
+import {Link, useNavigate} from 'react-router-dom';
+import axios from 'axios';
+import { studentLoginRoute } from '../utils/APIRoutes';
 
 const Account = () => {
-    const username="Avinash Pandey";
+
+    const navigate=useNavigate();
+    const [values, setValues]= useState({
+        username:"",
+        password:"",
+    })
+    const toastOptions={
+        position:"bottom-right",
+        autoClose:8000,
+        draggable: true,
+        pauseOnHover:true,
+        theme:"dark",
+    }
+
+    const handleSubmit= ()=>{  
+                try {
+                    localStorage.removeItem('chat-app-user');
+                navigate("/loginStudent");
+                } catch (error) {
+                   console.log(`logout/handleSubmit-->${error}`); 
+                }
+        }
+    
+        const user = JSON.parse(localStorage.getItem('chat-app-user')) || {};
+
     return (
         <Container>
             <div className='container'>
-            <div className="username">{username}</div>
-            <img className="user-pic" src={userpic} alt="icon" />
+            <div className="username">Welcome {user.username}</div>
             <span>|</span>
-            <img className="user-pic" src={logoutpic} alt="icon" />
+            <img className="user-pic" src={logoutpic} alt="icon" onClick={handleSubmit} />
             </div>
         </Container>
     );
 }
+    
 
 const Container= styled.div`
     display: flex;
