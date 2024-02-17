@@ -1,89 +1,103 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import {ToastContainer, toast} from 'react-toastify';
-import {Link, useNavigate} from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { studentLoginRoute } from '../utils/APIRoutes';
 
 const StudentLogin = () => {
-    const navigate=useNavigate();
-    const [values, setValues]= useState({
-        username:"",
-        password:"",
+    const navigate = useNavigate();
+    const [values, setValues] = useState({
+        username: "",
+        password: "",
+        usertype: "",
     })
-    const toastOptions={
-        position:"bottom-right",
-        autoClose:8000,
+    const toastOptions = {
+        position: "bottom-right",
+        autoClose: 8000,
         draggable: true,
-        pauseOnHover:true,
-        theme:"dark",
+        pauseOnHover: true,
+        theme: "dark",
     }
 
-    const handleSubmit= async(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if(handleValidation()){
-            const {username, password}=values;
-            const {data}=await axios.post(studentLoginRoute, {
+        if (handleValidation()) {
+            const { username, password, usertype } = values;
+            const { data } = await axios.post(studentLoginRoute, {
                 username,
                 password,
+                usertype,
             })
 
-            if(data.status === false){
+            if (data.status === false) {
                 toast.error(data.msg, toastOptions);
             }
-            if(data.status===true){
-                localStorage.setItem('chat-app-user',JSON.stringify(data.user));
+            if (data.status === true) {
+                localStorage.setItem('chat-app-user', JSON.stringify(data.user));
                 navigate("/homepage");
             }
         }
     }
 
-    const handleChange=(event)=>{
-        setValues({...values, [event.target.name]:event.target.value})
+    const handleChange = (event) => {
+        setValues({ ...values, [event.target.name]: event.target.value })
     }
 
-    const handleValidation=()=>{
-        const {username, password} = values;
-        if(password===""){
-            alert("Email & Password are required");
+    const handleValidation = () => {
+        const { username, password, usertype } = values;
+        if (password === "") {
+            alert("Username & Password are required");
             return false;
         }
-        else if(username.length===""){
-            alert("Email & Password are required");
-            return false;        
+        else if (username.length === "") {
+            alert("Username & Password are required");
+            return false;
+        }
+        else if (usertype !== "Student") {
+            alert("Wrong Usertype");
+            return false;
         }
         return true;
     }
 
 
     return (
-<>
-<FormContainer>
-            <form onSubmit={(event)=>handleSubmit(event)}>
-                <input
-                    type="text"
-                    placeholder='Username'
-                    name='username'
-                    onChange={(e)=>handleChange(e)}
-                    min="3"
-                />
-               
-                <input
-                    type="password"
-                    placeholder='Password'
-                    name='password'
-                    onChange={(e)=>handleChange(e)}
-                />
-               
-                <button type='submit'>Log In</button>
-                <span>Don't have an account? <Link to='/registerStudent'>Register</Link></span>
-            </form>
-        </FormContainer>            
-</>
+        <>
+            <FormContainer>
+                <form onSubmit={(event) => handleSubmit(event)}>
+                    <input
+                        type="text"
+                        placeholder='Username'
+                        name='username'
+                        onChange={(e) => handleChange(e)}
+                        min="3"
+                    />
+
+                    <input
+                        type="text"
+                        placeholder='User Type'
+                        name='usertype'
+                        onChange={(e) => handleChange(e)}
+                        min="3"
+                    />
+
+                    <input
+                        type="password"
+                        placeholder='Password'
+                        name='password'
+                        onChange={(e) => handleChange(e)}
+                    />
+
+                    <button type='submit'>Log In</button>
+                    <span>Don't have an account? <Link to='/registerStudent'>Register</Link></span>
+                </form>
+            </FormContainer>
+        </>
     );
 }
- 
-const FormContainer=styled.div`
+
+const FormContainer = styled.div`
 height: 100vh;
 width: 100vw;
 display: flex;
@@ -144,5 +158,5 @@ form{
     }
     
 }
-`; 
+`;
 export default StudentLogin;

@@ -29,7 +29,7 @@ const studentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    userType: {
+    usertype: {
         type:String,
         required:true,
     },

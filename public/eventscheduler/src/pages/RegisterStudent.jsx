@@ -15,6 +15,7 @@ const StudentRegister = () => {
         rollNumber: "",
         year: "",
         section: "",
+        usertype:"",
     })
     const toastOptions = {
         position: "bottom-right",
@@ -27,7 +28,7 @@ const StudentRegister = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (handleValidation()) {
-            const { username, password, name, email, section, year, rollNumber } = values;
+            const { username, password, name, email, section, year, rollNumber, usertype } = values;
             const { data } = await axios.post(studentRegisterRoute, {
                 username,
                 name,
@@ -36,6 +37,7 @@ const StudentRegister = () => {
                 section,
                 year,
                 rollNumber,
+                usertype,
             })
 
             if (data.status === false) {
@@ -53,13 +55,17 @@ const StudentRegister = () => {
     }
 
     const handleValidation = () => {
-        const { username, password } = values;
+        const { username, password, usertype } = values;
         if (password === "") {
-            alert("Email & Password are required");
+            alert("Username & Password are required");
             return false;
         }
         else if (username.length === "") {
-            alert("Email & Password are required");
+            alert("Username & Password are required");
+            return false;
+        }
+        else if (usertype !== "Student") {
+            alert("Wrong Usertype");
             return false;
         }
         return true;
@@ -83,6 +89,14 @@ const StudentRegister = () => {
                     type="text"
                     placeholder='Name'
                     name='name'
+                    onChange={(e) => handleChange(e)}
+                    min="3"
+                />
+
+                <input
+                    type="text"
+                    placeholder='User Type'
+                    name='usertype'
                     onChange={(e) => handleChange(e)}
                     min="3"
                 />
