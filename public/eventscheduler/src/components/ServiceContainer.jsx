@@ -14,21 +14,24 @@ const ServiceContainer = () => {
     const [appointmentBtn, setAppointmentBtn] = useState(false);
     const [groupsBtn, setGroupsBtn] = useState(false);
     const [meetingsBtn, setMeetingsBtn] = useState(false);
-    const [x, setX] = useState(false);
+
+    const { usertype } = JSON.parse(localStorage.getItem('chat-app-user'));
 
     let renderedComponent=null;
 
     if(appointmentBtn && !groupsBtn && !meetingsBtn){
-        renderedComponent= <StudentAppWindow/>
+        if(usertype==="Student")
+            renderedComponent= <StudentAppWindow/>
+        else if(usertype==="Faculty")
+            renderedComponent= <FacultyAppWindow/>
+        else
+            alert("Usertype not defined");
     }
     else if(!appointmentBtn && groupsBtn && !meetingsBtn){
         renderedComponent= <GroupServicesWindow/>
     }
     else if(!appointmentBtn && !groupsBtn && meetingsBtn){
         renderedComponent= <MeetingServicesWindow/>
-    }
-    else if(!appointmentBtn && !groupsBtn && !meetingsBtn && x){
-        renderedComponent= <FacultyAppWindow/>
     }
     else{
         renderedComponent= <Welcome/>
@@ -62,15 +65,7 @@ const ServiceContainer = () => {
                     <img className="service-icon" src={meetingicon} alt=" meetings icon" />
                     <div className="service-title">Meetings</div>
                 </div>
-                <div className="service-option" onClick={()=>{
-                    setGroupsBtn(false);
-                    setMeetingsBtn(false);
-                    setAppointmentBtn(false);
-                    setX(true);
-                }}>
-                    <img className="service-icon" src={appointmenticon} alt="appointment icon" />
-                    <div className="service-title">Faculty</div>
-                </div>
+                
             </div>
            
             </PanelContainer>

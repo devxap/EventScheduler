@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { studentRegisterRoute } from '../utils/APIRoutes';
+import { facultyRegisterRoute, studentRegisterRoute } from '../utils/APIRoutes';
 
 const StudentRegister = () => {
     const navigate = useNavigate();
@@ -15,8 +15,10 @@ const StudentRegister = () => {
         rollNumber: "",
         year: "",
         section: "",
-        usertype:"",
+        usertype: "",
     })
+
+
     const toastOptions = {
         position: "bottom-right",
         autoClose: 8000,
@@ -29,33 +31,54 @@ const StudentRegister = () => {
         e.preventDefault();
         if (handleValidation()) {
             const { username, password, name, email, section, year, rollNumber, usertype } = values;
-            const { data } = await axios.post(studentRegisterRoute, {
-                username,
-                name,
-                email,
-                password,
-                section,
-                year,
-                rollNumber,
-                usertype,
-            })
-
-            if (data.status === false) {
-                toast.error(data.msg, toastOptions);
-            }
-            if (data.status === true) {
-                localStorage.setItem('chat-app-user', JSON.stringify(data.user));
-                navigate("/homepage");
+    
+            if (usertype.toLowerCase() === 'faculty') {
+                const { data } = await axios.post(facultyRegisterRoute, {
+                    username,
+                    name,
+                    email,
+                    password,
+                    usertype,
+                });
+    
+                if (data.status === false) {
+                    toast.error(data.msg, toastOptions);
+                }
+                if (data.status === true) {
+                    localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+                    navigate("/homepage");
+                }
+            } else {
+                // Assuming usertype is 'student'
+                const { data } = await axios.post(studentRegisterRoute, {
+                    username,
+                    name,
+                    email,
+                    password,
+                    section,
+                    year,
+                    rollNumber,
+                    usertype,
+                });
+    
+                if (data.status === false) {
+                    toast.error(data.msg, toastOptions);
+                }
+                if (data.status === true) {
+                    localStorage.setItem('chat-app-user', JSON.stringify(data.user));
+                    navigate("/homepage");
+                }
             }
         }
-    }
+    };
+    
 
     const handleChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value })
     }
 
     const handleValidation = () => {
-        const { username, password, usertype } = values;
+        const { username, password } = values;
         if (password === "") {
             alert("Username & Password are required");
             return false;
@@ -64,43 +87,18 @@ const StudentRegister = () => {
             alert("Username & Password are required");
             return false;
         }
-        else if (usertype !== "Student") {
-            alert("Wrong Usertype");
-            return false;
-        }
+
         return true;
     }
 
 
-    return (
-        <>
-        <FormContainer>
-            <form onSubmit={(event) => handleSubmit(event)}>
-                <div className="forminputs">
-                <input
-                    type="text"
-                    placeholder='Username'
-                    name='username'
-                    onChange={(e) => handleChange(e)}
-                    min="3"
-                />
+    const renderStudentFields = () => {
+        if (values.usertype.toLowerCase() === 'faculty') {
+            return null;
+        }
 
-                <input
-                    type="text"
-                    placeholder='Name'
-                    name='name'
-                    onChange={(e) => handleChange(e)}
-                    min="3"
-                />
-
-                <input
-                    type="text"
-                    placeholder='User Type'
-                    name='usertype'
-                    onChange={(e) => handleChange(e)}
-                    min="3"
-                />
-
+        return (
+            <>
                 <input
                     type="text"
                     placeholder='Roll Number'
@@ -121,34 +119,70 @@ const StudentRegister = () => {
                     name='year'
                     onChange={(e) => handleChange(e)}
                 />
+            </>
+        );
 
-                <input
-                    type="email"
-                    placeholder='Email'
-                    name='email'
-                    onChange={(e) => handleChange(e)}
-                    min="3"
-                />
 
-                <input
-                    type="password"
-                    placeholder='Password'
-                    name='password'
-                    onChange={(e) => handleChange(e)}
-                />
-                </div>
+    };
 
-                <button type='submit'>Register</button>
-                <span>Have an account already? <Link to='/loginStudent'>Login</Link></span>
-            </form>
-        </FormContainer>
-        <ToastContainer />
+    return (
+        <>
+            <FormContainer>
+                <form onSubmit={(event) => handleSubmit(event)}>
+                    <div className="forminputs">
+                        <input
+                            type="text"
+                            placeholder='Username'
+                            name='username'
+                            onChange={(e) => handleChange(e)}
+                            min="3"
+                        />
+
+                        <input
+                            type="text"
+                            placeholder='Name'
+                            name='name'
+                            onChange={(e) => handleChange(e)}
+                            min="3"
+                        />
+
+                        <input
+                            type="text"
+                            placeholder='User Type'
+                            name='usertype'
+                            onChange={(e) => handleChange(e)}
+                            min="3"
+                        />
+
+                        {renderStudentFields()}
+
+                        <input
+                            type="email"
+                            placeholder='Email'
+                            name='email'
+                            onChange={(e) => handleChange(e)}
+                            min="3"
+                        />
+
+                        <input
+                            type="password"
+                            placeholder='Password'
+                            name='password'
+                            onChange={(e) => handleChange(e)}
+                        />
+                    </div>
+
+                    <button type='submit'>Register</button>
+                    <span>Have an account already? <Link to='/loginStudent'>Login</Link></span>
+                </form>
+            </FormContainer>
+            <ToastContainer />
         </>
     );
 }
 
 
-const FormContainer=styled.div`
+const FormContainer = styled.div`
 height: 100vh;
 width: 100vw;
 display: flex;
@@ -217,6 +251,6 @@ form{
     }
     
 }
-`; 
+`;
 
 export default StudentRegister;

@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import approve from '../approve.png';
 import reject from '../reject.png';
-
-
-const initialPersons=[
-    { roll: 21051210, name: "Avinash Pandey", year: 3, section: "CSE13", date: "2/14/2024", time: "03:00", description: "Hi professor, I want to meet you for a project discussion, please approve my appointment, thank you. Hi professor, I want to meet you for a project discussion, please approve my appointment, thank you", approvalStatus: false },
-    { roll: 21051211, name: "John Doe", year: 2, section: "ECE12", date: "2/15/2024", time: "04:30", description: "Meeting request for project collaboration.", approvalStatus: true },
-    { roll: 21051212, name: "Jane Smith", year: 4, section: "MECH14", date: "2/16/2024", time: "02:00", description: "Discussion on research paper submission.", approvalStatus: false },
-    { roll: 21051213, name: "Alice Johnson", year: 1, section: "IT11", date: "2/17/2024", time: "10:00", description: "Query regarding upcoming exam schedule.", approvalStatus: true },
-    { roll: 21051214, name: "Bob Anderson", year: 3, section: "CSE13", date: "2/18/2024", time: "01:30", description: "Appointment request for career guidance.", approvalStatus: false },
-    { roll: 21051215, name: "Eva Williams", year: 2, section: "ECE12", date: "2/19/2024", time: "11:00", description: "Discussion on internship opportunities.", approvalStatus: true },
-    { roll: 21051216, name: "Samuel Taylor", year: 4, section: "MECH14", date: "2/20/2024", time: "03:30", description: "Approval for project extension request.", approvalStatus: false },
-    { roll: 21051217, name: "Sophia Brown", year: 1, section: "IT11", date: "2/21/2024", time: "12:00", description: "Meeting to discuss course assignments.", approvalStatus: false },
-    { roll: 21051218, name: "Michael White", year: 3, section: "CSE13", date: "2/22/2024", time: "02:30", description: "Seeking feedback on project progress.", approvalStatus: false },
-    { roll: 21051219, name: "Olivia Miller", year: 2, section: "ECE12", date: "2/23/2024", time: "09:00", description: "Query about upcoming workshop.", approvalStatus: true },
-    { roll: 21051220, name: "Daniel Davis", year: 4, section: "MECH14", date: "2/24/2024", time: "04:00", description: "Discussion on final year project.", approvalStatus: true },
-];
+import axios from 'axios';
+import { host, getAllStudentsRoute } from '../utils/APIRoutes';
 
 
 const FacultyAppWindow = () => {
 
-    const [persons,setPersons] = useState(initialPersons);
+
+    const [initialPersons, setInitialPersons] = useState([]);
+    const loggedinuser = JSON.parse(localStorage.getItem('chat-app-user'));
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(getAllStudentsRoute);
+                setInitialPersons(response.data.students);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []); 
 
     return (
         <Container>
@@ -37,10 +39,12 @@ const FacultyAppWindow = () => {
                     <div className="col-w">Approval</div>
                 </div>
                 <div className="parent">
-                    <div className="coldata">
-                        {persons.map((person, index) => (
-                            <div key={index} className="personContainer">
-                                <div>{person.roll}</div>
+                <div className="coldata">
+                    {initialPersons.map((person) => (
+                        // Move the condition inside the mapping function
+                        person.facultyName === loggedinuser.name && (
+                            <div key={person._id} className="personContainer">
+                                <div>{person.rollNumber}</div>
                                 <div>{person.name}</div>
                                 <div>{person.year}</div>
                                 <div>{person.section}</div>
@@ -52,11 +56,10 @@ const FacultyAppWindow = () => {
                                         ?
                                             (
                                                 <div>
-                                                    <img src={reject} onClick={()=>{
+                                                    <img src={reject} onClick={async ()=>{
+                                                         person.approvalStatus = false;
+                                                         await axios.put(`${host}/api/auth/updateApproval/${person._id}`, { approvalStatus: person.approvalStatus });
                                                          console.log("Previously Approved, Now rejected");
-                                                         const updatedPersons = [...persons];
-                                                         updatedPersons[index].approvalStatus = false;
-                                                         setPersons(updatedPersons);
                                                     }} className='approval-style' alt="icon" />
                                                 </div>
             
@@ -64,11 +67,10 @@ const FacultyAppWindow = () => {
                                         :
                                             (
                                                 <div>
-                                                    <img src={approve} onClick={()=>{
+                                                    <img src={approve} onClick={async ()=>{
+                                                        person.approvalStatus = true;
+                                                        await axios.put(`${host}/api/auth/updateApproval/${person._id}`, { approvalStatus: person.approvalStatus });
                                                         console.log("Previously rejected, Now approved");
-                                                        const updatedPersons = [...persons];
-                                                        updatedPersons[index].approvalStatus = true;
-                                                        setPersons(updatedPersons);
                                                     }} className='approval-style' alt="icon" />
                                                     
                                                 </div>
@@ -76,6 +78,7 @@ const FacultyAppWindow = () => {
                                      }
                                 </div>
                             </div>
+                        )
                         ))}
 
                     </div>
@@ -127,7 +130,7 @@ const Container = styled.div`
             gap: 10px;
             .personContainer{
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: left;
                 width: 100%;
                 box-shadow: 0px 10px 20px 0px #eaeaea;

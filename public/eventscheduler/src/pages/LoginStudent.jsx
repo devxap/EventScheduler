@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { studentLoginRoute } from '../utils/APIRoutes';
+import { getStudentRoute, studentLoginRoute } from '../utils/APIRoutes';
 
 const StudentLogin = () => {
     const navigate = useNavigate();
@@ -44,8 +44,8 @@ const StudentLogin = () => {
         setValues({ ...values, [event.target.name]: event.target.value })
     }
 
-    const handleValidation = () => {
-        const { username, password, usertype } = values;
+    const handleValidation = async () => {
+        const { username, password } = values;
         if (password === "") {
             alert("Username & Password are required");
             return false;
@@ -54,15 +54,11 @@ const StudentLogin = () => {
             alert("Username & Password are required");
             return false;
         }
-        else if (usertype !== "Student") {
-            alert("Wrong Usertype");
-            return false;
-        }
         return true;
     }
 
 
-    return (
+    return (    
         <>
             <FormContainer>
                 <form onSubmit={(event) => handleSubmit(event)}>
@@ -74,13 +70,6 @@ const StudentLogin = () => {
                         min="3"
                     />
 
-                    <input
-                        type="text"
-                        placeholder='User Type'
-                        name='usertype'
-                        onChange={(e) => handleChange(e)}
-                        min="3"
-                    />
 
                     <input
                         type="password"
