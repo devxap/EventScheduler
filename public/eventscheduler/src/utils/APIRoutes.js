@@ -2,7 +2,7 @@ export const host="http://localhost:5000";
 
 export const studentRegisterRoute=`${host}/api/auth/registerStudent`;
 export const studentLoginRoute=`${host}/api/auth/loginStudent`;
-export const getAllStudentsRoute=`${host}/api/auth/getAllStudents`;
+export const getAllStudentsRoute=`${host}/api/auth/getAllStudents/:id`;
 export const getStudentRoute=`${host}/api/auth/getStudent`;
 
 

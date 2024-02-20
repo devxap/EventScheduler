@@ -22,12 +22,27 @@ const Account = () => {
         theme:"dark",
     }
 
+    let pic = {};
+    let text="";
+    if(localStorage.getItem('chat-app-user')){
+        pic=logoutpic;
+        text="Logout"
+    }
+    else{
+        text="Login"
+        pic=userpic;
+    }
     const handleSubmit= ()=>{  
-                try {
-                    localStorage.removeItem('chat-app-user');
-                navigate("/loginStudent");
-                } catch (error) {
-                   console.log(`logout/handleSubmit-->${error}`); 
+                if(localStorage.getItem('chat-app-user')){
+                    try {
+                        localStorage.removeItem('chat-app-user');
+                    navigate("/loginStudent");
+                    } catch (error) {
+                       console.log(`logout/handleSubmit-->${error}`); 
+                    }
+                }
+                else{
+                    navigate("/loginStudent");
                 }
         }
     
@@ -36,9 +51,9 @@ const Account = () => {
     return (
         <Container>
             <div className='container'>
-            <div className="username">Welcome {user.username}</div>
+            <div className="username">{text} {user.username}</div>
             <span>|</span>
-            <img className="user-pic" src={logoutpic} alt="icon" onClick={handleSubmit} />
+            <img className="user-pic" src={pic} alt="icon" onClick={handleSubmit} />
             </div>
         </Container>
     );
