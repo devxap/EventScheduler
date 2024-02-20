@@ -42,10 +42,10 @@ const FacultyAppWindow = () => {
                 </div>
                 <div className="parent">
                 <div className="coldata">
-                    {initialPersons && Object.values(initialPersons).map((person) => (
+                    {/* {Object.keys(initialPersons).map((person, i) => (
                         // Move the condition inside the mapping function
                         person.facultyName === loggedinuser.name && (
-                            <div key={person._id} className="personContainer">
+                            <div key={i} className="personContainer">
                                 <div>{person.rollNumber}</div>
                                 <div>{person.name}</div>
                                 <div>{person.year}</div>
@@ -81,7 +81,7 @@ const FacultyAppWindow = () => {
                                 </div>
                             </div>
                         )
-                        ))}
+                        ))} */}
 
                     </div>
 

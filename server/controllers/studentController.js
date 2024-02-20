@@ -110,25 +110,26 @@ module.exports.registerStudent=async (req,res,next)=>{
         }
 
         if (user.usertype === 'Faculty') {
-            const studentarray = await Student.find({ 'appointments.facultyName': user.name });
-            console.log(studentarray);
-
             try {
-                studentarray.forEach(student => {
-                    user.students.push({
-                        studentRollNumber: student.rollNumber,
-                        studentName: student.name,
-                        studentUserame: student.username,
-                        studentYear: student.year,
-                        studentSection: student.section,
-                        dateOfAppointment: student.appointments.dateOfAppointment,
-                        timeOfAppointment: student.appointments.timeOfAppointment,
-                        messageForAppointment: student.appointments.messageForAppointment,
-                        approvalStatus: student.appointments.approvalStatus,
+                const studentAppointments = await Student.find({ 'appointments.facultyName': user.name });
+
+                studentAppointments.forEach((student) => {
+                    const relevantAppointments = student.appointments.filter(appointment => appointment.facultyName === user.name);
+
+                    relevantAppointments.forEach(appointment => {
+                        user.students.push({
+                            studentRollNumber: student.rollNumber,
+                            studentName: student.name,
+                            studentUsername: student.username,
+                            studentYear: student.year,
+                            studentSection: student.section,
+                            dateOfAppointment: appointment.dateOfAppointment,
+                            timeOfAppointment: appointment.timeOfAppointment,
+                            messageForAppointment: appointment.messageForAppointment,
+                            approvalStatus: appointment.approvalStatus,
+                        });
                     });
                 });
-
-                console.log(studentarray);
 
             } catch (error) {
                 console.log(`studentController/studentlogin/arraypush-->${error}`);
@@ -145,6 +146,7 @@ module.exports.registerStudent=async (req,res,next)=>{
         next(error);
     }
 };
+
 
 
 
