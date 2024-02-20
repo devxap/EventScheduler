@@ -110,11 +110,11 @@ module.exports.registerStudent=async (req,res,next)=>{
         }
 
         if (user.usertype === 'Faculty') {
-            const students = await Student.find({ 'appointments.facultyName': user.name });
-            console.log(students);
+            const studentarray = await Student.find({ 'appointments.facultyName': user.name });
+            console.log(studentarray);
 
             try {
-                students.forEach(student => {
+                studentarray.forEach(student => {
                     user.students.push({
                         studentRollNumber: student.rollNumber,
                         studentName: student.name,
@@ -127,6 +127,9 @@ module.exports.registerStudent=async (req,res,next)=>{
                         approvalStatus: student.appointments.approvalStatus,
                     });
                 });
+
+                console.log(studentarray);
+
             } catch (error) {
                 console.log(`studentController/studentlogin/arraypush-->${error}`);
             }

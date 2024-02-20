@@ -11,12 +11,14 @@ const FacultyAppWindow = () => {
 
     const [initialPersons, setInitialPersons] = useState([]);
     const loggedinuser = JSON.parse(localStorage.getItem('chat-app-user'));
+    
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(getAllStudentsRoute);
                 setInitialPersons(response.data.students);
+                console.log(initialPersons);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -40,7 +42,7 @@ const FacultyAppWindow = () => {
                 </div>
                 <div className="parent">
                 <div className="coldata">
-                    {initialPersons.map((person) => (
+                    {initialPersons && Object.values(initialPersons).map((person) => (
                         // Move the condition inside the mapping function
                         person.facultyName === loggedinuser.name && (
                             <div key={person._id} className="personContainer">
